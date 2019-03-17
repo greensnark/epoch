@@ -1,0 +1,37 @@
+#! /usr/bin/env stack
+-- stack script --resolver lts-13.13
+
+import System.Environment (getArgs)
+
+import Data.Time.Clock.POSIX (POSIXTime
+                             , getPOSIXTime
+                             , posixSecondsToUTCTime)
+import Data.Time.LocalTime (TimeZone
+                           , ZonedTime
+                           , getCurrentTimeZone
+                           , getZonedTime
+                           , utcToZonedTime)
+import Data.Time.RFC3339 (formatTimeRFC3339)
+
+epochMillisToZonedTime :: TimeZone -> POSIXTime -> ZonedTime
+epochMillisToZonedTime timeZone timeEpochMillis =
+  utcToZonedTime timeZone utcTime
+  where utcTime = posixSecondsToUTCTime (timeEpochMillis / 1000)
+
+posixTimeMillis :: Real a => a -> POSIXTime
+posixTimeMillis epochTime
+  | epochTime < 10000000000 = realToFrac (epochTime * 1000)
+  | otherwise = realToFrac epochTime
+
+posixTimeRawMillis :: POSIXTime -> Integer
+posixTimeRawMillis posix = floor $ toRational posix * 1000
+
+(<&>) = flip (<$>)
+
+main = do
+  args <- getArgs
+  localTimeZone <- getCurrentTimeZone
+
+  if length args == 0 
+      then getPOSIXTime <&> posixTimeRawMillis >>= print
+    else putStrLn $ formatTimeRFC3339 $ epochMillisToZonedTime localTimeZone (posixTimeMillis (read $ args !! 0))
