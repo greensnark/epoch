@@ -1,8 +1,13 @@
 # epoch
 
-Converts epoch seconds or milliseconds to an RFC3339 time
+A [Stack](https://docs.haskellstack.org/en/stable/README/) script to convert
+epoch seconds or milliseconds to an RFC3339 time
 
 ## Usage
+
+(This tool needs [Haskell
+Stack](https://docs.haskellstack.org/en/stable/README/), make sure you've
+installed it)
 
 Show RFC3339 equivalent of Unix epoch time:
 
